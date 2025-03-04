@@ -21,6 +21,7 @@ async function run() {
     const productsCollection = database.collection("products");
     const teamMembersCollection = database.collection("teamMembers");
     const projectsCollection = database.collection("projects");
+    const testimonialsCollection = database.collection("projects");
 
     app.get("/digital-services", async (req, res) => {
       const query = {};
@@ -44,6 +45,12 @@ async function run() {
       const query = {};
       const projects = projectsCollection.find(query);
       res.send(await projects.toArray());
+    });
+
+    app.get("/testimonials", async (req, res) => {
+      const query = {};
+      const testimonials = testimonialsCollection.find(query);
+      res.send(await testimonials.toArray());
     });
 
     //end of function
