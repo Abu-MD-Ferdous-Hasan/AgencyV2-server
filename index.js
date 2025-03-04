@@ -21,7 +21,7 @@ async function run() {
     const productsCollection = database.collection("products");
     const teamMembersCollection = database.collection("teamMembers");
     const projectsCollection = database.collection("projects");
-    const testimonialsCollection = database.collection("projects");
+    const testimonialsCollection = database.collection("testimonials");
 
     app.get("/digital-services", async (req, res) => {
       const query = {};
@@ -48,9 +48,25 @@ async function run() {
     });
 
     app.get("/testimonials", async (req, res) => {
+      const { fields } = req.query;
       const query = {};
-      const testimonials = testimonialsCollection.find(query);
-      res.send(await testimonials.toArray());
+      const testimonials = await testimonialsCollection.find(query).toArray();
+
+      if (fields) {
+        const fieldArray = fields.split(",");
+        const filteredData = testimonials.map((item) => {
+          const filtered = {};
+          fieldArray.forEach((field) => {
+            if (item[field]) {
+              filtered[field] = item[field];
+            }
+          });
+          return filtered;
+        });
+        res.send(filteredData);
+      } else {
+        res.send(testimonials);
+      }
     });
 
     //end of function
