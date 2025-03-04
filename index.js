@@ -20,6 +20,7 @@ async function run() {
     const digitalServicesCollection = database.collection("digitalServices");
     const productsCollection = database.collection("products");
     const teamMembersCollection = database.collection("teamMembers");
+    const projectsCollection = database.collection("projects");
 
     app.get("/digital-services", async (req, res) => {
       const query = {};
@@ -38,6 +39,11 @@ async function run() {
       const query = {};
       const teamMembers = teamMembersCollection.find(query);
       res.send(await teamMembers.toArray());
+    });
+    app.get("/projects", async (req, res) => {
+      const query = {};
+      const projects = projectsCollection.find(query);
+      res.send(await projects.toArray());
     });
 
     //end of function
