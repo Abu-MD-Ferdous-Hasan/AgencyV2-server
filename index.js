@@ -142,7 +142,7 @@ async function run() {
       }
     });
 
-    app.post("/login", async (req, res) => {
+    app.post("/signin", async (req, res) => {
       try {
         const { email, password } = req.body;
 
@@ -176,6 +176,7 @@ async function run() {
           success: true,
           message: "Login successful",
           accessToken: token,
+          userId: user._id,
         });
       } catch (error) {
         res.status(500).json({
