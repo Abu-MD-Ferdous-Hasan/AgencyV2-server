@@ -4,6 +4,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
+const { ObjectId } = require("mongodb");
 
 const port = process.env.PORT || 5000;
 const uri = `mongodb+srv://${process.env.DB_username}:${process.env.DB_password}@cluster0.p9sfd7v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -26,17 +27,6 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
-//verify admin middleware
-const verifyAdmin = async (req, res, next) => {
-  const email = req.decoded.email;
-  const query = { email: email };
-  const user = await userCollection.findOne(query);
-  const isAdmin = user?.role === "admin";
-  if (!isAdmin) {
-    return res.status(403).send({ message: "forbidden access" });
-  }
-  next();
-};
 
 // server code starts from here
 async function run() {
@@ -48,6 +38,19 @@ async function run() {
     const projectsCollection = database.collection("projects");
     const testimonialsCollection = database.collection("testimonials");
     const usersCollection = database.collection("users");
+
+    //verify admin middleware
+    const verifyAdmin = async (req, res, next) => {
+      console.log("checking admin token");
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const isAdmin = user?.role === "admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
 
     app.get("/digital-services", async (req, res) => {
       const query = {};
@@ -198,6 +201,24 @@ async function run() {
       }
     });
 
+    app.get("/verify-token", verifyToken, async (req, res) => {
+      try {
+        const user = await User.findById(req.user.id).select("-password");
+
+        res.json({
+          valid: true,
+          user: {
+            id: user._id,
+            role: user.role,
+          },
+        });
+      } catch (error) {
+        res
+          .status(401)
+          .json({ valid: false, message: "Token validation failed" });
+      }
+    });
+
     app.get("/users/admin/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
 
@@ -213,6 +234,221 @@ async function run() {
       }
       res.send({ admin });
     });
+
+    app.get("/all-users", verifyToken, verifyAdmin, async (req, res) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const users = await usersCollection.find(query).toArray();
+      res.send(users);
+    });
+
+    // PUT endpoints for updating items
+    app.put("/products/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedProduct = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: updatedProduct,
+        };
+
+        const result = await productsCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json({
+          success: true,
+          message: "Product updated successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error updating product",
+          error: error.message,
+        });
+      }
+    });
+
+    app.put("/team-members/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedMember = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: updatedMember,
+        };
+
+        const result = await teamMembersCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json({
+          success: true,
+          message: "Team member updated successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error updating team member",
+          error: error.message,
+        });
+      }
+    });
+
+    app.put("/projects/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedProject = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: updatedProject,
+        };
+
+        const result = await projectsCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json({
+          success: true,
+          message: "Project updated successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error updating project",
+          error: error.message,
+        });
+      }
+    });
+
+    app.put("/testimonials/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedTestimonial = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: updatedTestimonial,
+        };
+
+        const result = await testimonialsCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json({
+          success: true,
+          message: "Testimonial updated successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error updating testimonial",
+          error: error.message,
+        });
+      }
+    });
+
+    // DELETE endpoints for removing items
+    app.delete("/products/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const result = await productsCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.json({
+          success: true,
+          message: "Product deleted successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error deleting product",
+          error: error.message,
+        });
+      }
+    });
+
+    app.delete(
+      "/team-members/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const id = req.params.id;
+          const result = await teamMembersCollection.deleteOne({
+            _id: new ObjectId(id),
+          });
+          res.json({
+            success: true,
+            message: "Team member deleted successfully",
+            result,
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            message: "Error deleting team member",
+            error: error.message,
+          });
+        }
+      }
+    );
+
+    app.delete("/projects/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const result = await projectsCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.json({
+          success: true,
+          message: "Project deleted successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error deleting project",
+          error: error.message,
+        });
+      }
+    });
+
+    app.delete(
+      "/testimonials/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const id = req.params.id;
+          const result = await testimonialsCollection.deleteOne({
+            _id: new ObjectId(id),
+          });
+          res.json({
+            success: true,
+            message: "Testimonial deleted successfully",
+            result,
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            message: "Error deleting testimonial",
+            error: error.message,
+          });
+        }
+      }
+    );
 
     //end of function
   } finally {
