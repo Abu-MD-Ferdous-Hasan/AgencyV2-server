@@ -75,6 +75,13 @@ async function run() {
       const projects = projectsCollection.find(query);
       res.send(await projects.toArray());
     });
+    app.get("/projects/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const project = await projectsCollection.find(query).toArray();
+      console.log(project);
+      res.send(project[0]);
+    });
 
     app.get("/testimonials", async (req, res) => {
       const { fields } = req.query;
