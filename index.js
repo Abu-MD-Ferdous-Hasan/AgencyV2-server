@@ -71,16 +71,70 @@ async function run() {
       res.send(await teamMembers.toArray());
     });
     app.get("/projects", async (req, res) => {
-      const query = {};
-      const projects = projectsCollection.find(query);
-      res.send(await projects.toArray());
+      try {
+        const projects = await projectsCollection.find({}).toArray();
+        // Reorder the fields in each project document
+        const orderedProjects = projects.map((project) => ({
+          _id: project._id,
+          projectTitle: project.projectTitle,
+          projectCategory: project.projectCategory,
+          projectImage: project.projectImage,
+          projectDescription: project.projectDescription,
+          projectTechnologies: project.projectTechnologies,
+          features: project.features,
+          links: project.links,
+          challenges: project.challenges,
+          createdAt: project.createdAt,
+        }));
+        res.json({
+          success: true,
+          data: orderedProjects,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error fetching projects",
+          error: error.message,
+        });
+      }
     });
+
     app.get("/projects/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const project = await projectsCollection.find(query).toArray();
-      console.log(project);
-      res.send(project[0]);
+      try {
+        const id = req.params.id;
+        const project = await projectsCollection.findOne({
+          _id: new ObjectId(id),
+        });
+        if (!project) {
+          return res.status(404).json({
+            success: false,
+            message: "Project not found",
+          });
+        }
+        // Reorder the fields in the project document
+        const orderedProject = {
+          _id: project._id,
+          projectTitle: project.projectTitle,
+          projectCategory: project.projectCategory,
+          projectImage: project.projectImage,
+          projectDescription: project.projectDescription,
+          projectTechnologies: project.projectTechnologies,
+          features: project.features,
+          links: project.links,
+          challenges: project.challenges,
+          createdAt: project.createdAt,
+        };
+        res.json({
+          success: true,
+          data: orderedProject,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error fetching project",
+          error: error.message,
+        });
+      }
     });
 
     app.get("/testimonials", async (req, res) => {
@@ -123,8 +177,13 @@ async function run() {
           });
         }
 
+        // Convert email to lowercase safely
+        const normalizedEmail = email?.toLowerCase() || email;
+
         // Check if user already exists
-        const existingUser = await usersCollection.findOne({ email });
+        const existingUser = await usersCollection.findOne({
+          email: normalizedEmail,
+        });
         if (existingUser) {
           return res.status(400).json({
             success: false,
@@ -135,7 +194,7 @@ async function run() {
         const newUser = {
           firstName,
           lastName,
-          email,
+          email: normalizedEmail,
           password,
           services,
           createdAt: new Date(),
@@ -175,8 +234,11 @@ async function run() {
           });
         }
 
+        // Convert email to lowercase safely
+        const normalizedEmail = email?.toLowerCase() || email;
+
         // Find user by email
-        const user = await usersCollection.findOne({ email });
+        const user = await usersCollection.findOne({ email: normalizedEmail });
 
         // Check if user exists and password matches
         if (!user || user.password !== password) {
@@ -243,10 +305,19 @@ async function run() {
     });
 
     app.get("/all-users", verifyToken, verifyAdmin, async (req, res) => {
-      const email = req.decoded.email;
-      const query = { email: email };
-      const users = await usersCollection.find(query).toArray();
-      res.send(users);
+      try {
+        const users = await usersCollection.find({}).toArray();
+        res.json({
+          success: true,
+          data: users,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error fetching users",
+          error: error.message,
+        });
+      }
     });
 
     // PUT endpoints for updating items
@@ -254,8 +325,17 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedProduct = req.body;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
+        let filter;
+        let options = { upsert: true };
+
+        // If id is 'new', create a new document
+        if (id === "new") {
+          filter = {}; // Empty filter for new document
+          options = { upsert: true };
+        } else {
+          filter = { _id: new ObjectId(id) };
+        }
+
         const updateDoc = {
           $set: updatedProduct,
         };
@@ -267,13 +347,16 @@ async function run() {
         );
         res.json({
           success: true,
-          message: "Product updated successfully",
+          message:
+            id === "new"
+              ? "Product created successfully"
+              : "Product updated successfully",
           result,
         });
       } catch (error) {
         res.status(500).json({
           success: false,
-          message: "Error updating product",
+          message: "Error processing product",
           error: error.message,
         });
       }
@@ -283,8 +366,16 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedMember = req.body;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
+        let filter;
+        let options = { upsert: true };
+
+        if (id === "new") {
+          filter = {};
+          options = { upsert: true };
+        } else {
+          filter = { _id: new ObjectId(id) };
+        }
+
         const updateDoc = {
           $set: updatedMember,
         };
@@ -296,13 +387,16 @@ async function run() {
         );
         res.json({
           success: true,
-          message: "Team member updated successfully",
+          message:
+            id === "new"
+              ? "Team member created successfully"
+              : "Team member updated successfully",
           result,
         });
       } catch (error) {
         res.status(500).json({
           success: false,
-          message: "Error updating team member",
+          message: "Error processing team member",
           error: error.message,
         });
       }
@@ -312,8 +406,16 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedProject = req.body;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
+        let filter;
+        let options = { upsert: true };
+
+        if (id === "new") {
+          filter = {};
+          options = { upsert: true };
+        } else {
+          filter = { _id: new ObjectId(id) };
+        }
+
         const updateDoc = {
           $set: updatedProject,
         };
@@ -325,13 +427,16 @@ async function run() {
         );
         res.json({
           success: true,
-          message: "Project updated successfully",
+          message:
+            id === "new"
+              ? "Project created successfully"
+              : "Project updated successfully",
           result,
         });
       } catch (error) {
         res.status(500).json({
           success: false,
-          message: "Error updating project",
+          message: "Error processing project",
           error: error.message,
         });
       }
@@ -341,8 +446,15 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedTestimonial = req.body;
-        const filter = { _id: new ObjectId(id) };
-        const options = { upsert: true };
+        let filter;
+        let options = { upsert: true };
+
+        if (id === "new") {
+          filter = {};
+        } else {
+          filter = { _id: new ObjectId(id) };
+        }
+
         const updateDoc = {
           $set: updatedTestimonial,
         };
@@ -354,13 +466,16 @@ async function run() {
         );
         res.json({
           success: true,
-          message: "Testimonial updated successfully",
+          message:
+            id === "new"
+              ? "Testimonial created successfully"
+              : "Testimonial updated successfully",
           result,
         });
       } catch (error) {
         res.status(500).json({
           success: false,
-          message: "Error updating testimonial",
+          message: "Error processing testimonial",
           error: error.message,
         });
       }
@@ -451,6 +566,89 @@ async function run() {
           res.status(500).json({
             success: false,
             message: "Error deleting testimonial",
+            error: error.message,
+          });
+        }
+      }
+    );
+
+    // POST endpoints for creating new items
+    app.post("/products/new", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const newProduct = req.body;
+        const result = await productsCollection.insertOne(newProduct);
+        res.status(201).json({
+          success: true,
+          message: "Product created successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error creating product",
+          error: error.message,
+        });
+      }
+    });
+
+    app.post(
+      "/team-members/new",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const newMember = req.body;
+          const result = await teamMembersCollection.insertOne(newMember);
+          res.status(201).json({
+            success: true,
+            message: "Team member created successfully",
+            result,
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            message: "Error creating team member",
+            error: error.message,
+          });
+        }
+      }
+    );
+
+    app.post("/projects/new", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const newProject = req.body;
+        const result = await projectsCollection.insertOne(newProject);
+        res.status(201).json({
+          success: true,
+          message: "Project created successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error creating project",
+          error: error.message,
+        });
+      }
+    });
+
+    app.post(
+      "/testimonials/new",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        try {
+          const newTestimonial = req.body;
+          const result = await testimonialsCollection.insertOne(newTestimonial);
+          res.status(201).json({
+            success: true,
+            message: "Testimonial created successfully",
+            result,
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            message: "Error creating testimonial",
             error: error.message,
           });
         }
