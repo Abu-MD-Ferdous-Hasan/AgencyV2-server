@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 const uri = `mongodb+srv://${process.env.DB_username}:${process.env.DB_password}@cluster0.p9sfd7v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(uri);
 
-// middleware
+// boiler plate middleware
 app.use(cors());
 app.use(express.json());
 // verifyToken middleware
@@ -73,7 +73,7 @@ async function run() {
     app.get("/projects", async (req, res) => {
       try {
         const projects = await projectsCollection.find({}).toArray();
-        // Reorder the fields in each project document
+        // Reordering the fields
         const orderedProjects = projects.map((project) => ({
           _id: project._id,
           projectTitle: project.projectTitle,
@@ -111,7 +111,7 @@ async function run() {
             message: "Project not found",
           });
         }
-        // Reorder the fields in the project document
+        // Reordering the fields
         const orderedProject = {
           _id: project._id,
           projectTitle: project.projectTitle,
@@ -169,7 +169,6 @@ async function run() {
           services = [],
         } = req.body;
 
-        // Check if required fields are present
         if (!firstName || !lastName || !email || !password) {
           return res.status(400).json({
             success: false,
@@ -177,10 +176,8 @@ async function run() {
           });
         }
 
-        // Convert email to lowercase safely
         const normalizedEmail = email?.toLowerCase() || email;
 
-        // Check if user already exists
         const existingUser = await usersCollection.findOne({
           email: normalizedEmail,
         });
@@ -226,7 +223,6 @@ async function run() {
       try {
         const { email, password } = req.body;
 
-        // Check if email and password are provided
         if (!email || !password) {
           return res.status(400).json({
             success: false,
@@ -234,13 +230,10 @@ async function run() {
           });
         }
 
-        // Convert email to lowercase safely
         const normalizedEmail = email?.toLowerCase() || email;
 
-        // Find user by email
         const user = await usersCollection.findOne({ email: normalizedEmail });
 
-        // Check if user exists and password matches
         if (!user || user.password !== password) {
           return res.status(401).json({
             success: false,
@@ -325,16 +318,10 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedProduct = req.body;
-        let filter;
+
         let options = { upsert: true };
 
-        // If id is 'new', create a new document
-        if (id === "new") {
-          filter = {}; // Empty filter for new document
-          options = { upsert: true };
-        } else {
-          filter = { _id: new ObjectId(id) };
-        }
+        const filter = { _id: new ObjectId(id) };
 
         const updateDoc = {
           $set: updatedProduct,
@@ -366,15 +353,10 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedMember = req.body;
-        let filter;
+
         let options = { upsert: true };
 
-        if (id === "new") {
-          filter = {};
-          options = { upsert: true };
-        } else {
-          filter = { _id: new ObjectId(id) };
-        }
+        const filter = { _id: new ObjectId(id) };
 
         const updateDoc = {
           $set: updatedMember,
@@ -406,15 +388,9 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedProject = req.body;
-        let filter;
         let options = { upsert: true };
 
-        if (id === "new") {
-          filter = {};
-          options = { upsert: true };
-        } else {
-          filter = { _id: new ObjectId(id) };
-        }
+        const filter = { _id: new ObjectId(id) };
 
         const updateDoc = {
           $set: updatedProject,
@@ -446,14 +422,9 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedTestimonial = req.body;
-        let filter;
         let options = { upsert: true };
 
-        if (id === "new") {
-          filter = {};
-        } else {
-          filter = { _id: new ObjectId(id) };
-        }
+        const filter = { _id: new ObjectId(id) };
 
         const updateDoc = {
           $set: updatedTestimonial,
