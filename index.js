@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 // verifyToken middleware
 const verifyToken = (req, res, next) => {
+  console.log("verifyToken middleware");
   if (!req.headers.authorization) {
     return res.status(401).send({ message: "unauthorized access" });
   }
@@ -167,6 +168,8 @@ async function run() {
           email,
           password,
           services = [],
+          gender,
+          profileImage,
         } = req.body;
 
         if (!firstName || !lastName || !email || !password) {
@@ -195,6 +198,8 @@ async function run() {
           password,
           services,
           createdAt: new Date(),
+          gender,
+          profileImage,
         };
 
         const result = await usersCollection.insertOne(newUser);
@@ -253,6 +258,7 @@ async function run() {
           message: "Login successful",
           accessToken: token,
           userId: user._id,
+          profileImage: user.profileImage,
         });
       } catch (error) {
         res.status(500).json({
@@ -297,9 +303,10 @@ async function run() {
       res.send({ admin });
     });
 
-    app.get("/all-users", verifyToken, verifyAdmin, async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
+      const options = { projection: { password: 0 } };
       try {
-        const users = await usersCollection.find({}).toArray();
+        const users = await usersCollection.find({}, options).toArray();
         res.json({
           success: true,
           data: users,
@@ -625,6 +632,102 @@ async function run() {
         }
       }
     );
+
+    // User management endpoints
+    app.put("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedUser = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: false };
+        const updateDoc = {
+          $set: updatedUser,
+        };
+
+        const result = await usersCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        res.json({
+          success: true,
+          message: "User updated successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error updating user",
+          error: error.message,
+        });
+      }
+    });
+
+    app.delete("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const result = await usersCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.json({
+          success: true,
+          message: "User deleted successfully",
+          result,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Error deleting user",
+          error: error.message,
+        });
+      }
+    });
+
+    // Update user profile endpoint
+    app.put("/users-profile", verifyToken, async (req, res) => {
+      console.log("first");
+      try {
+        const { firstName, lastName, gender, profileImage } = req.body;
+        const email = req.decoded.email;
+
+        const filter = { email: email };
+        const updateDoc = {
+          $set: {
+            firstName,
+            lastName,
+            gender,
+            profileImage,
+          },
+        };
+
+        const result = await usersCollection.updateOne(filter, updateDoc);
+        console.log(result);
+        if (result.matchedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "User not found",
+          });
+        }
+
+        // Get the updated user data
+        const updatedUser = await usersCollection.findOne(filter, {
+          projection: { password: 0 },
+        });
+
+        res.json({
+          success: true,
+          message: "Profile updated successfully",
+          data: updatedUser,
+        });
+      } catch (error) {
+        console.error("Profile update error:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error updating profile",
+          error: error.message,
+        });
+      }
+    });
 
     //end of function
   } finally {
