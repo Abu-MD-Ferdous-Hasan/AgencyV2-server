@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 // verifyToken middleware
 const verifyToken = (req, res, next) => {
-  console.log("verifyToken middleware");
   if (!req.headers.authorization) {
     return res.status(401).send({ message: "unauthorized access" });
   }
@@ -42,7 +41,6 @@ async function run() {
 
     //verify admin middleware
     const verifyAdmin = async (req, res, next) => {
-      console.log("checking admin token");
       const email = req.decoded.email;
       const query = { email: email };
       const user = await usersCollection.findOne(query);
@@ -170,6 +168,8 @@ async function run() {
           services = [],
           gender,
           profileImage,
+          // uncomment this for testing only
+          // role,
         } = req.body;
 
         if (!firstName || !lastName || !email || !password) {
@@ -200,6 +200,8 @@ async function run() {
           createdAt: new Date(),
           gender,
           profileImage,
+          // uncomment this for testing only
+          // role,
         };
 
         const result = await usersCollection.insertOne(newUser);
@@ -685,7 +687,6 @@ async function run() {
 
     // Update user profile endpoint
     app.put("/users-profile", verifyToken, async (req, res) => {
-      console.log("first");
       try {
         const { firstName, lastName, gender, profileImage } = req.body;
         const email = req.decoded.email;
@@ -701,7 +702,7 @@ async function run() {
         };
 
         const result = await usersCollection.updateOne(filter, updateDoc);
-        console.log(result);
+
         if (result.matchedCount === 0) {
           return res.status(404).json({
             success: false,

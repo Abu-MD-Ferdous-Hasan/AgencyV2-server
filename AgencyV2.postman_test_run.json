@@ -1,0 +1,575 @@
+{
+	"id": "ab12e3d8-ca18-4b9b-944b-81b01209dc51",
+	"name": "AgencyV2",
+	"timestamp": "2025-05-15T20:43:12.041Z",
+	"collection_id": "29362243-d5fb7ffe-644d-4c37-bd77-7ee0efc5f40a",
+	"folder_id": 0,
+	"environment_id": "29362243-7e4f0de9-f83c-481f-a24e-6a7309a3d3ab",
+	"totalPass": 38,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-05-15T20:43:06.225Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "d6c6c2f7-8775-4254-bb1a-8574481e0037",
+			"name": "Register Test",
+			"url": "/register",
+			"time": 448,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response has success message": true,
+				"Response includes access token": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has success message": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response includes access token": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				448
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response has success message": true,
+					"Response includes access token": true
+				}
+			]
+		},
+		{
+			"id": "55718df6-a483-457c-869c-57ab158c5f22",
+			"name": "Sign In Test",
+			"url": "http://localhost:5000/signin",
+			"time": 219,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Login successful": true,
+				"Response includes token and user data": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login successful": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response includes token and user data": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				219
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Login successful": true,
+					"Response includes token and user data": true
+				}
+			]
+		},
+		{
+			"id": "e1127cb7-2367-4798-ae61-35eba23097c7",
+			"name": "Profile Update Test",
+			"url": "http://localhost:5000/users-profile",
+			"time": 455,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Token is valid": true,
+				"Profile update successful": true,
+				"Updated data matches request": true,
+				"Email matches token": true
+			},
+			"testPassFailCounts": {
+				"Token is valid": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Profile update successful": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Updated data matches request": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Email matches token": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				455
+			],
+			"allTests": [
+				{
+					"Token is valid": true,
+					"Profile update successful": true,
+					"Updated data matches request": true,
+					"Email matches token": true
+				}
+			]
+		},
+		{
+			"id": "3eccf3d4-c007-49b8-a87b-7028cc4163d9",
+			"name": "Digital Services Test",
+			"url": "http://localhost:5000/digital-services",
+			"time": 238,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Products array is returned": true,
+				"Each product has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Products array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each product has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				238
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Products array is returned": true,
+					"Each product has required fields": true
+				}
+			]
+		},
+		{
+			"id": "726378e0-6e70-42c1-aa3a-0f2d7d839933",
+			"name": "Products Test",
+			"url": "http://localhost:5000/products",
+			"time": 245,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Products array is returned": true,
+				"Each product has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Products array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each product has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				245
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Products array is returned": true,
+					"Each product has required fields": true
+				}
+			]
+		},
+		{
+			"id": "4ba6338d-7aa3-40f9-b06a-0bbc30d0fbbb",
+			"name": "Team Members Test",
+			"url": "http://localhost:5000/team-members",
+			"time": 235,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Team members array is returned": true,
+				"Each team member has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Team members array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each team member has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				235
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Team members array is returned": true,
+					"Each team member has required fields": true
+				}
+			]
+		},
+		{
+			"id": "875dec02-a2ea-4409-b4fd-8d405bdd28a4",
+			"name": "All Projects Test",
+			"url": "http://localhost:5000/projects",
+			"time": 452,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Projects array is returned": true,
+				"Each project has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Projects array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each project has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				452
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Projects array is returned": true,
+					"Each project has required fields": true
+				}
+			]
+		},
+		{
+			"id": "0a5e8baf-2d2c-44c4-a294-dab551958e23",
+			"name": "Add a Project Test",
+			"url": "http://localhost:5000/projects/new",
+			"time": 459,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Create Project - Status Code": true,
+				"Create Project - Response Structure": true,
+				"Create Project - Data Validation": true
+			},
+			"testPassFailCounts": {
+				"Create Project - Status Code": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Create Project - Response Structure": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Create Project - Data Validation": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				459
+			],
+			"allTests": [
+				{
+					"Create Project - Status Code": true,
+					"Create Project - Response Structure": true,
+					"Create Project - Data Validation": true
+				}
+			]
+		},
+		{
+			"id": "025966c0-beed-4153-9291-bb435e7e342f",
+			"name": "Single Project test",
+			"url": "http://localhost:5000/projects/682651dd3a8fcf9c3ef35388",
+			"time": 220,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Projects array is returned": true,
+				"Each project has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Projects array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each project has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				220
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Projects array is returned": true,
+					"Each project has required fields": true
+				}
+			]
+		},
+		{
+			"id": "0b7aa554-3b82-4e4a-832e-6b50465f9a5d",
+			"name": "Update Project Tests (Admin)",
+			"url": "http://localhost:5000 /projects/682651dd3a8fcf9c3ef35388",
+			"time": 443,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Update Project - Status Code": true,
+				"Update Project - Response Structure": true,
+				"Update Project - Data Validation": true
+			},
+			"testPassFailCounts": {
+				"Update Project - Status Code": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Update Project - Response Structure": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Update Project - Data Validation": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				443
+			],
+			"allTests": [
+				{
+					"Update Project - Status Code": true,
+					"Update Project - Response Structure": true,
+					"Update Project - Data Validation": true
+				}
+			]
+		},
+		{
+			"id": "6302490b-fae0-4ee2-a6df-67ac50eb5ff1",
+			"name": "Delete Project Test",
+			"url": "http://localhost:5000/projects/682651dd3a8fcf9c3ef35388",
+			"time": 469,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Delete Project - Status Code": true,
+				"Delete Project - Response Structure": true,
+				"Delete Project - Data Validation": true
+			},
+			"testPassFailCounts": {
+				"Delete Project - Status Code": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Delete Project - Response Structure": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Delete Project - Data Validation": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				469
+			],
+			"allTests": [
+				{
+					"Delete Project - Status Code": true,
+					"Delete Project - Response Structure": true,
+					"Delete Project - Data Validation": true
+				}
+			]
+		},
+		{
+			"id": "ec2d11eb-4a77-4db7-9010-d6acaf315afa",
+			"name": "Testimonials Test",
+			"url": "http://localhost:5000/testimonials",
+			"time": 237,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Testimonials array is returned": true,
+				"Each testimonial has required fields": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Testimonials array is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Each testimonial has required fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				237
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Testimonials array is returned": true,
+					"Each testimonial has required fields": true
+				}
+			]
+		},
+		{
+			"id": "bf585649-8917-4bf4-ac5d-08ff29b03230",
+			"name": "Delete User Test",
+			"url": "http://localhost:5000/users/682651da3a8fcf9c3ef35387",
+			"time": 459,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Successful User Deletion - 200": true
+			},
+			"testPassFailCounts": {
+				"Successful User Deletion - 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				459
+			],
+			"allTests": [
+				{
+					"Successful User Deletion - 200": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 4579,
+	"collection": {
+		"requests": [
+			{
+				"id": "d6c6c2f7-8775-4254-bb1a-8574481e0037",
+				"method": "POST"
+			},
+			{
+				"id": "55718df6-a483-457c-869c-57ab158c5f22",
+				"method": "POST"
+			},
+			{
+				"id": "e1127cb7-2367-4798-ae61-35eba23097c7",
+				"method": "PUT"
+			},
+			{
+				"id": "3eccf3d4-c007-49b8-a87b-7028cc4163d9",
+				"method": "GET"
+			},
+			{
+				"id": "726378e0-6e70-42c1-aa3a-0f2d7d839933",
+				"method": "GET"
+			},
+			{
+				"id": "4ba6338d-7aa3-40f9-b06a-0bbc30d0fbbb",
+				"method": "GET"
+			},
+			{
+				"id": "875dec02-a2ea-4409-b4fd-8d405bdd28a4",
+				"method": "GET"
+			},
+			{
+				"id": "0a5e8baf-2d2c-44c4-a294-dab551958e23",
+				"method": "POST"
+			},
+			{
+				"id": "025966c0-beed-4153-9291-bb435e7e342f",
+				"method": "GET"
+			},
+			{
+				"id": "0b7aa554-3b82-4e4a-832e-6b50465f9a5d",
+				"method": "PUT"
+			},
+			{
+				"id": "6302490b-fae0-4ee2-a6df-67ac50eb5ff1",
+				"method": "DELETE"
+			},
+			{
+				"id": "ec2d11eb-4a77-4db7-9010-d6acaf315afa",
+				"method": "GET"
+			},
+			{
+				"id": "bf585649-8917-4bf4-ac5d-08ff29b03230",
+				"method": "DELETE"
+			}
+		]
+	}
+}
